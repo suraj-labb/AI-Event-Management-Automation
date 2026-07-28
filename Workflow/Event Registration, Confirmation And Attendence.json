@@ -1,0 +1,570 @@
+{
+  "name": "Event Registration and Confirmation",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI Workshop",
+        "formDescription": "**AI Workshop Description**\n\nThis AI Workshop is designed to introduce participants to the exciting world of Artificial Intelligence. The session covers AI fundamentals, popular AI tools, and practical applications in education, business, and everyday life. Through interactive demonstrations and hands-on activities, participants will learn how to use AI responsibly, improve productivity, and explore future career opportunities in the field of AI.\n",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Full Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "College/University Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Department/Branch",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Year of Study",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "1st"
+                  },
+                  {
+                    "option": "2nd"
+                  },
+                  {
+                    "option": "3rd"
+                  },
+                  {
+                    "option": "4th"
+                  },
+                  {
+                    "option": "5th"
+                  },
+                  {
+                    "option": "6th"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Student ID",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Preferred AI Topics (Select one or more)",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Introduction to AI"
+                  },
+                  {
+                    "option": "Generative AI (ChatGPT, Gemini, Copilot)"
+                  },
+                  {
+                    "option": "Prompt Engineering"
+                  },
+                  {
+                    "option": "AI for Research & Academics"
+                  },
+                  {
+                    "option": "AI for Coding"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bd211fa8-f32a-4cf4-8129-c2e17d79d27a",
+      "name": "On form submission",
+      "webhookId": "1da1b85f-a563-4f36-ad52-af4ca2524c25"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1LZkeVufRWGE5BTRb00pJmT1GhhVpAZTvRxgsW4iT_oo/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Ai workshop",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "College/University Name",
+              "displayName": "College/University Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department/Branch",
+              "displayName": "Department/Branch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Year of Study",
+              "displayName": "Year of Study",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Student ID",
+              "displayName": "Student ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred AI Topics (Select one or more)",
+              "displayName": "Preferred AI Topics (Select one or more)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Participant ID",
+              "displayName": "Participant ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "QR Code",
+              "displayName": "QR Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "formMode",
+              "displayName": "formMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "02cf212b-305b-4727-b08a-d2f4d60cb0ad",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SEMLQgseMd3f74lt",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst now = new Date();\n\nconst participantId =\n  \"EVT2026-\" +\n  now.getFullYear() +\n  String(now.getMonth() + 1).padStart(2, \"0\") +\n  String(now.getDate()).padStart(2, \"0\") +\n  \"-\" +\n  Math.floor(Math.random() * 100000)\n    .toString()\n    .padStart(5, \"0\");\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    participantId\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d236dfae-feec-4f04-8d5f-c607bb1dfda3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://api.qrserver.com/v1/create-qr-code/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "Size",
+              "value": "300x300"
+            },
+            {
+              "name": "data",
+              "value": "={{$json.participantId}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        624,
+        0
+      ],
+      "id": "cad2051a-961a-438e-8476-fd8d62c6dc46",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8240fb1e-5676-491c-92d8-8a67699f1d32",
+              "name": "participantId",
+              "value": "={{ $json.participantId }}",
+              "type": "string"
+            },
+            {
+              "id": "86d0b15d-9a69-42ab-a06f-29f8afcba7e0",
+              "name": "qrUrl",
+              "value": "=https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' +  {{ $json.participantId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "f3343ddf-f4cd-4e0f-b6c6-e0d9e17b8251",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"Email Address\"] }}",
+        "subject": "Registration Successful - Your QR Code",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n</head>\n\n<body style=\"font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;margin:0;padding:20px;\">\n\n<table width=\"650\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#ffffff;border-radius:8px;padding:30px;\">\n\n<tr>\n<td>\n\n<h2 style=\"color:#0B5ED7;text-align:center;\">\n🎉 Registration Confirmed\n</h2>\n\n<p>Dear <strong>{{$json[\"Full Name\"]}}</strong>,</p>\n\n<p>\nThank you for registering for our event. Your registration has been successfully confirmed.\nPlease find your registration details below.\n</p>\n\n<hr>\n\n<h3 style=\"color:#0B5ED7;\">Participant Details</h3>\n\n<table cellpadding=\"8\" cellspacing=\"0\" width=\"100%\" style=\"border-collapse:collapse;\">\n\n<tr style=\"background:#f8f9fa;\">\n<td><strong>Participant Name</strong></td>\n<td>{{$json[\"Full Name\"]}}</td>\n</tr>\n\n<tr>\n<td><strong>Email Address</strong></td>\n<td>{{$json[\"Email Address\"]}}</td>\n</tr>\n\n<tr style=\"background:#f8f9fa;\">\n<td><strong>Participant ID</strong></td>\n<td>{{$json.participantId}}</td>\n</tr>\n\n<tr>\n<td><strong>Preferred AI Topic(s)</strong></td>\n<td> {{ $json[\"Preferred AI Topics (Select one or more)\"] }}</td>\n</tr>\n\n<tr style=\"background:#f8f9fa;\">\n<td><strong>Event Date</strong></td>\n<td>30 August 2026</td>\n</tr>\n\n<tr>\n<td><strong>Reporting Time</strong></td>\n<td>09:30 AM</td>\n</tr>\n\n<tr style=\"background:#f8f9fa;\">\n<td><strong>Venue</strong></td>\n<td>Amity University, Patna</td>\n</tr>\n\n</table>\n\n<br>\n\n<h3 style=\"color:#0B5ED7;\">Your Event QR Code</h3>\n\n<p>Please present the following QR Code at the registration desk during check-in.</p>\n\n<div style=\"text-align:center;\">\n<img src=\"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={{$json.participantId}}\" alt=\"QR Code\">\n</div>\n\n<br>\n\n<div style=\"background:#F8F9FA;padding:15px;border-left:4px solid #0B5ED7;\">\n\n<b>Important Instructions</b>\n\n<ul>\n<li>Please arrive at least <strong>30 minutes before</strong> the event begins.</li>\n<li>Carry a valid College/Student ID.</li>\n<li>Show this email or your Participant ID during check-in.</li>\n<li>Keep your QR Code safe for event entry.</li>\n</ul>\n\n</div>\n\n<br>\n\n<p>\nWe look forward to welcoming you to the event.\n</p>\n\n<p>\nBest Regards,<br><br>\n\n<b>Event Organizing Committee</b><br>\nAMITY UNIVERSITY, Patna\n</p>\n\n<hr>\n\n<p style=\"font-size:12px;color:#888888;text-align:center;\">\nThis is an automated email. Please do not reply to this message.\n</p>\n\n</td>\n</tr>\n\n</table>\n\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -240
+      ],
+      "id": "f6d545da-9ee1-4411-82e2-e646af82fa64",
+      "name": "Send a message",
+      "webhookId": "a0a40b1c-ad0e-4734-8e66-ad91871421d0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bhkxgRlJkBU0IJ64",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1LZkeVufRWGE5BTRb00pJmT1GhhVpAZTvRxgsW4iT_oo/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1042067323,
+          "mode": "list",
+          "cachedResultName": "Ai workshop update",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LZkeVufRWGE5BTRb00pJmT1GhhVpAZTvRxgsW4iT_oo/edit#gid=1042067323"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Department/Branch": "={{ $json['Department/Branch'] }}",
+            "Student ID": "={{ $json['Student ID'] }}",
+            "Email Address": "={{ $json['Email Address'] }}",
+            "Full Name": "={{ $json['Full Name'] }}",
+            "College/University Name": "={{ $json['College/University Name'] }}",
+            "Year of Study": "={{ $json['Year of Study'] }}",
+            "Preferred AI Topics (Select one or more)": "={{ $json['Preferred AI Topics (Select one or more)'] }}",
+            "participantId": "={{ $json.participantId }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "College/University Name",
+              "displayName": "College/University Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department/Branch",
+              "displayName": "Department/Branch",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Year of Study",
+              "displayName": "Year of Study",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Student ID",
+              "displayName": "Student ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Address",
+              "displayName": "Email Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Preferred AI Topics (Select one or more)",
+              "displayName": "Preferred AI Topics (Select one or more)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "participantId",
+              "displayName": "participantId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "8aab2c88-e28f-4f2b-a7a0-dfcefac04f64",
+      "name": "Append row in sheet1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SEMLQgseMd3f74lt",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f564fb72-3cbf-41c9-9d62-ad667c3d8d0b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d0ce5cc3a9ca7b9c04d9f614c5c53bb762f4a575c2b4466c053d332ca170b9e"
+  },
+  "nodeGroups": [],
+  "id": "fV8rDyLyMkQfCE9e",
+  "tags": []
+}

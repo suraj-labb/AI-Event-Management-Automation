@@ -1,0 +1,662 @@
+{
+  "name": "Workshop Certificate Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "1f6cd46d-fd80-4fd7-8190-0f2941d44636",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "leftValue": "={{ $json.Name }}",
+              "rightValue": ""
+            },
+            {
+              "id": "21eae0c6-dad4-47e9-a456-8f3616dc7440",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "06722f9a-8b65-4635-8a56-c3b536e4d7c9",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -176,
+        416
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "f758a837-7f47-43f0-89bf-dd8609e1a045",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "deliverable"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3b89f73c-375e-45a7-bcf2-c8970ada39f7",
+      "name": "Check Email Valid",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        176,
+        400
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate unique certificate ID and QR code\nconst items = $input.all();\n\nreturn items.map(item => {\n  // Generate unique certificate ID\n  const timestamp = Date.now();\n  const randomStr = Math.random().toString(36).substr(2, 9).toUpperCase();\n  const certId = `CERT-${timestamp}-${randomStr}`;\n  \n  // Create verification URL\n  const verifyUrl = `https://workshopverify.com/cert?id=${certId}`;\n  \n  // Generate QR code URL using free API\n  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(verifyUrl)}`;\n  \n  // Format date for display\n  const formattedDate = new Date().toLocaleDateString('en-US', {\n    year: 'numeric',\n    month: 'long',\n    day: 'numeric'\n  });\n  \n  return {\n    json: {\n      ...item.json,\n      certificateId: certId,\n      verifyUrl: verifyUrl,\n      qrCodeUrl: qrCodeUrl,\n      timestamp: new Date().toISOString(),\n      formattedDate: formattedDate\n    }\n  };\n});"
+      },
+      "id": "0630739a-869b-4d8c-94f2-151eb4787bc9",
+      "name": "Generate Certificate ID & QR",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        464,
+        224
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "certificate-html",
+              "name": "=certificateHtml",
+              "type": "string",
+              "value": "=<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n<title>Certificate of Registration</title>\n\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');\n\n*{\n    margin:0;\n    padding:0;\n    box-sizing:border-box;\n}\n\nbody{\n    font-family:'Poppins',sans-serif;\n    background:linear-gradient(135deg,#667eea,#764ba2);\n    display:flex;\n    justify-content:center;\n    align-items:center;\n    min-height:100vh;\n    padding:20px;\n}\n\n.certificate{\n    width:900px;\n    background:#fff;\n    border-radius:20px;\n    padding:60px;\n    position:relative;\n    overflow:hidden;\n    box-shadow:0 20px 60px rgba(0,0,0,.25);\n}\n\n.certificate::before{\n    content:\"\";\n    position:absolute;\n    top:0;\n    left:0;\n    width:100%;\n    height:8px;\n    background:linear-gradient(90deg,#667eea,#764ba2);\n}\n\n.certificate::after{\n    content:\"\";\n    position:absolute;\n    bottom:0;\n    left:0;\n    width:100%;\n    height:8px;\n    background:linear-gradient(90deg,#764ba2,#667eea);\n}\n\n.badge{\n    position:absolute;\n    top:30px;\n    right:30px;\n    background:#28a745;\n    color:#fff;\n    padding:8px 18px;\n    border-radius:25px;\n    font-size:12px;\n    font-weight:600;\n    text-transform:uppercase;\n}\n\n.header{\n    text-align:center;\n    margin-bottom:35px;\n}\n\n.logo{\n    font-size:34px;\n    font-weight:700;\n    color:#764ba2;\n    margin-bottom:15px;\n}\n\nh1{\n    font-size:42px;\n    color:#333;\n    text-transform:uppercase;\n    letter-spacing:2px;\n}\n\n.subtitle{\n    text-align:center;\n    color:#666;\n    font-size:18px;\n    margin-top:15px;\n}\n\n.recipient{\n    text-align:center;\n    margin:45px 0;\n}\n\n.recipient-name{\n    font-size:50px;\n    color:#764ba2;\n    font-weight:700;\n    margin-bottom:15px;\n}\n\n.designation{\n    font-size:18px;\n    color:#666;\n    font-style:italic;\n}\n\n.event-details{\n    margin-top:35px;\n    background:#f8f9fc;\n    border:2px solid #e7e7e7;\n    border-radius:15px;\n    padding:35px;\n}\n\n.event-name{\n    text-align:center;\n    font-size:30px;\n    font-weight:600;\n    color:#333;\n    margin-bottom:30px;\n}\n\n.event-info{\n    display:flex;\n    justify-content:space-around;\n    flex-wrap:wrap;\n    gap:20px;\n}\n\n.info-item{\n    text-align:center;\n    flex:1;\n    min-width:180px;\n}\n\n.info-label{\n    font-size:13px;\n    color:#888;\n    text-transform:uppercase;\n    margin-bottom:8px;\n}\n\n.info-value{\n    font-size:16px;\n    font-weight:600;\n    color:#333;\n    word-break:break-word;\n}\n\n.footer{\n    margin-top:60px;\n    display:flex;\n    justify-content:center;\n}\n\n.qr-section{\n    text-align:center;\n}\n\n.qr-code{\n    width:120px;\n    height:120px;\n    padding:8px;\n    border:2px solid #ddd;\n    border-radius:10px;\n    background:#fff;\n}\n\n.cert-id{\n    margin-top:12px;\n    font-size:12px;\n    color:#666;\n    word-break:break-all;\n}\n</style>\n\n</head>\n\n<body>\n\n<div class=\"certificate\">\n\n<div class=\"badge\">\nRegistered\n</div>\n\n<div class=\"header\">\n<div class=\"logo\">\nAmity University Patna\n</div>\n\n<h1>\nCertificate of Registration\n</h1>\n</div>\n\n<p class=\"subtitle\">\nThis certifies that\n</p>\n\n<div class=\"recipient\">\n\n<div class=\"recipient-name\">\n{{ $('Google Sheets Trigger').item.json.Name }}\n</div>\n\n<div class=\"designation\">\nCertificate ID : {{ $json[\"certificateId\"] }}\n</div>\n\n</div>\n\n<p class=\"subtitle\">\nhas successfully registered for\n</p>\n\n<div class=\"event-details\">\n\n<div class=\"event-name\">\nAI Workshop\n</div>\n\n<div class=\"event-info\">\n\n<div class=\"info-item\">\n<div class=\"info-label\">\nDate\n</div>\n<div class=\"info-value\">\n{{ $json[\"formattedDate\"] }}\n</div>\n</div>\n\n<div class=\"info-item\">\n<div class=\"info-label\">\nEmail\n</div>\n<div class=\"info-value\">\n{{ $('Google Sheets Trigger').item.json.Email }}\n</div>\n</div>\n\n<div class=\"info-item\">\n<div class=\"info-label\">\nSelected Topic\n</div>\n<div class=\"info-value\">\n{{ $('Google Sheets Trigger').item.json['Preferred AI Topics (Select one or more)'] }}\n</div>\n</div>\n\n</div>\n\n</div>\n\n<div class=\"footer\">\n\n<div class=\"qr-section\">\n\n<img\nclass=\"qr-code\"\nsrc=\"{{ $json[\"qrCodeUrl\"] }}\"\nalt=\"QR Code\">\n\n<div class=\"cert-id\">\n{{ $json[\"certificateId\"] }}\n</div>\n\n</div>\n\n</div>\n\n</div>\n\n</body>\n</html>"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "32551d70-1c5d-4047-ad99-7315b829db1c",
+      "name": "Prepare Certificate HTML",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        704,
+        224
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Google Sheets Trigger').item.json.Name }}_{{ $('Generate Certificate ID & QR').item.json.certificateId }}.png",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "root",
+          "mode": "list",
+          "cachedResultName": "/ (Root folder)",
+          "cachedResultUrl": "https://drive.google.com/drive"
+        },
+        "options": {
+          "appPropertiesUi": {
+            "appPropertyValues": [
+              {
+                "key": "certificateId",
+                "value": "={{ $('Generate Certificate ID & QR').item.json.certificateId }}"
+              },
+              {
+                "key": "attendee",
+                "value": "={{ $('Google Sheets Trigger').item.json.Name }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0dc636cb-7f5b-4feb-bd4a-8b9b5c86c690",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "position": [
+        1360,
+        224
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "74W1Cxy83eFzTIAH",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.Email }}",
+        "subject": "=Your Workshop Certificate - {{ $('Google Sheets Trigger').item.json['Preferred AI Topics (Select one or more)'] }}",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body {\n      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n      line-height: 1.6;\n      color: #333;\n      max-width: 600px;\n      margin: 0 auto;\n      padding: 20px;\n    }\n    .header {\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 30px;\n      border-radius: 10px 10px 0 0;\n      text-align: center;\n    }\n    .content {\n      background: #f8f9fa;\n      padding: 30px;\n      border-radius: 0 0 10px 10px;\n    }\n    .event-box {\n      background: white;\n      padding: 20px;\n      border-radius: 8px;\n      margin: 20px 0;\n      border-left: 4px solid #764ba2;\n    }\n    .button {\n      display: inline-block;\n      background: #764ba2;\n      color: white;\n      padding: 12px 30px;\n      text-decoration: none;\n      border-radius: 5px;\n      margin: 20px 0;\n    }\n    .footer {\n      text-align: center;\n      color: #666;\n      font-size: 14px;\n      margin-top: 30px;\n      padding-top: 20px;\n      border-top: 1px solid #e0e0e0;\n    }\n    .info-row {\n      display: flex;\n      padding: 10px 0;\n      border-bottom: 1px solid #f0f0f0;\n    }\n    .info-label {\n      font-weight: bold;\n      width: 100px;\n      color: #666;\n    }\n    .info-value {\n      flex: 1;\n      color: #333;\n    }\n    .certificate-preview {\n      text-align: center;\n      margin: 30px 0;\n      padding: 20px;\n      background: white;\n      border-radius: 8px;\n      box-shadow: 0 2px 10px rgba(0,0,0,0.1);\n    }\n    .qr-instruction {\n      background: #e8f4fd;\n      border: 1px solid #bee5eb;\n      padding: 15px;\n      border-radius: 5px;\n      margin: 20px 0;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"header\">\n    <h1 style=\"margin: 0; font-size: 28px;\">🎓 Congratulations!</h1>\n    <p style=\"margin: 10px 0 0 0; opacity: 0.95;\">You've successfully completed the AI Workshop</p>\n  </div>\n\n  <div class=\"content\">\n    <p style=\"font-size: 18px; color: #333;\">Hello <strong>{{ $('Google Sheets Trigger').item.json.Name }}</strong>!</p>\n\n    <p>Congratulations on successfully completing the workshop! Your participation certificate has been generated and is ready for you.</p>\n\n    <div class=\"event-box\">\n      <h2 style=\"margin: 0 0 15px 0; color: #764ba2;\">AI Workshop</h2>\n\n      <div class=\"info-row\" style=\"border: none;\">\n        <span class=\"info-label\">🎫 ID:</span>\n        <span class=\"info-value\" style=\"font-family: monospace;\">{{ $('Generate Certificate ID & QR').item.json.certificateId }}</span>\n      </div>\n    </div>\n\n    <div class=\"qr-instruction\">\n      <strong>📄 About Your Certificate:</strong>\n      <ul style=\"margin: 10px 0; padding-left: 20px;\">\n        <li>Your completion certificate is attached to this email</li>\n        <li>The QR code on it can be used to verify authenticity</li>\n        <li>Save a copy for your records — no need to print unless required</li>\n      </ul>\n    </div>\n\n    <div class=\"certificate-preview\">\n      <h3 style=\"color: #764ba2; margin: 0 0 15px 0;\">Your Certificate</h3>\n      <img src=\"{{ $('HTML/CSS to Image').item.json.image_url }}\" alt=\"Certificate Preview\" style=\"max-width: 100%; height: auto; border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);\">\n\n      <a href=\"{{ $('HTML/CSS to Image').item.json.image_url }}\" class=\"button\">Download Certificate</a>\n    </div>\n\n    <div style=\"background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 20px 0;\">\n      <strong>✨ What's Next:</strong>\n      <ul style=\"margin: 10px 0; padding-left: 20px;\">\n        <li>Add this certificate to your resume or LinkedIn profile</li>\n        <li>Keep an eye out for our upcoming advanced workshops</li>\n        <li>Feel free to share your feedback about the workshop</li>\n      </ul>\n    </div>\n\n    <p><strong>Need Help?</strong></p>\n    <p>If you have any questions about your certificate or need a re-issue, please reply to this email or contact our support team.</p>\n\n    <div class=\"footer\">\n      <p><strong> AMITY UNIVERSITY PATNA</strong></p>\n      <p>This is an automated certificate delivery email. Please do not reply directly to this message.</p>\n      <p style=\"font-size: 12px; color: #999;\">Certificate ID: {{ $('Generate Certificate ID & QR').item.json.certificateId }} | Generated: {{ $('Generate Certificate ID & QR').item.json.formattedDate }}</p>\n    </div>\n  </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "657d6a4f-1b8e-4873-bb97-acc61bf69bdd",
+      "name": "Send Certificate Email",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        1600,
+        224
+      ],
+      "webhookId": "6cfc9b31-9e38-4f1e-9081-26912d970538",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bhkxgRlJkBU0IJ64",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mVm6hdOHhp9kMEt3tLRLvSSDkn_u2-07dmywLNKKDKM",
+          "mode": "list",
+          "cachedResultName": "Updated Info",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mVm6hdOHhp9kMEt3tLRLvSSDkn_u2-07dmywLNKKDKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Info1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mVm6hdOHhp9kMEt3tLRLvSSDkn_u2-07dmywLNKKDKM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "00aadea6-a35d-4b7f-8202-2fe0e5199e35",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        1872,
+        224
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SEMLQgseMd3f74lt",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "YOUR_SLACK_CHANNEL_ID",
+          "cachedResultName": "YOUR_SLACK_CHANNEL_NAME"
+        },
+        "text": "=✅ *New Workshop Registration*\n\n👤 *Name:* {{ $('Webhook Registration').item.json.body.name }}\n📧 *Email:* {{ $('Webhook Registration').item.json.body.email }}\n🎯 *Event:* {{ $('Webhook Registration').item.json.body.event }}\n📅 *Date:* {{ $('Webhook Registration').item.json.body.date }} at {{ $('Webhook Registration').item.json.body.time }}\n📍 *Venue:* {{ $('Webhook Registration').item.json.body.venue }}\n🏢 *Organization:* {{ $('Webhook Registration').item.json.body.organization }}\n💼 *Designation:* {{ $('Webhook Registration').item.json.body.designation }}\n\n🎫 *Certificate ID:* `{{ $('Generate Certificate ID & QR').item.json.certificateId }}`\n🔗 *Verify URL:* {{ $('Generate Certificate ID & QR').item.json.verifyUrl }}\n\n📄 *Certificate:* [View Certificate]({{ $('HTML/CSS to Image').item.json.image_url }})\n💾 *Drive:* [View in Drive]({{ $('Upload to Google Drive').item.json.webViewLink }})",
+        "otherOptions": {}
+      },
+      "id": "00444d94-f047-4408-8731-6eefe8b8aca5",
+      "name": "Notify Slack Channel",
+      "type": "n8n-nodes-base.slack",
+      "position": [
+        2048,
+        224
+      ],
+      "webhookId": "26ac34be-edf0-44e9-9459-5e5ca251f668",
+      "typeVersion": 2.2,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Registration successful! Certificate sent to your email.\",\n  \"certificateId\": \"{{ $json.certificateId }}\",\n  \"verifyUrl\": \"{{ $json.verifyUrl }}\"\n}",
+        "options": {}
+      },
+      "id": "918132b6-91f0-49df-a11b-7a4b0d20edca",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        2240,
+        224
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"Invalid email address\",\n  \"message\": \"The provided email address could not be verified. Please check and try again.\"\n}",
+        "options": {}
+      },
+      "id": "c86cd02b-aec1-4cc5-b40f-ecdb8b4a763a",
+      "name": "Email Verification Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        480,
+        512
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "email": "={{ $json.Email }}"
+      },
+      "id": "9744990e-ff5d-4257-a047-d57c98b6aba5",
+      "name": "Verifi Email",
+      "type": "n8n-nodes-verifiemail.verifiEmail",
+      "position": [
+        16,
+        400
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "verifiEmailApi": {
+          "id": "qBlsZmTaKMrh54lp",
+          "name": "VerifiEmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "html_content": "={{ $json.certificateHtml }}"
+      },
+      "id": "0e76df1c-c64b-429f-af67-c7d8652d59f1",
+      "name": "HTML/CSS to Image",
+      "type": "n8n-nodes-htmlcsstoimage.htmlCssToImage",
+      "position": [
+        880,
+        224
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "htmlcsstoimgApi": {
+          "id": "zQQ9woALriO5dH1N",
+          "name": "HTML to Image account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## How it Works\nThis workflow automates issuing  workshop certificates. When a participant submits the registration form via google sheet, their data is validated and their email is checked using VerifiEmail. If valid, the workflow generates a unique certificate ID, builds a verification URL and QR code, converts the certificate HTML into an image, saves it to Google Drive, emails it to the attendee, logs the registration in Google Sheets, and sends a Slack notification to the organizers. A JSON confirmation is also returned to the webhook.\n\n## Setup Steps\n1. Add required credentials: VerifiEmail, HTMLCSStoImage, Gmail, Google Sheets, Google Drive, Slack.  \n2. Replace placeholder URLs or Drive folders with your own.  \n3. Update certificate HTML template with your branding (optional).  \n4. Publish the workflow and connect your form to the webhook URL.  \n5. Test using a real email address.\n",
+        "height": 400,
+        "width": 528
+      },
+      "id": "60a55538-c34d-46b2-ac92-248823658e32",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1120,
+        -96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Validation\nGoogle sheet receives form data.  \nNode checks if name, email, and event are present.  \nIf missing → return validation error.  \nEmail is then verified using VerifiEmail.\n",
+        "height": 256,
+        "width": 752,
+        "color": 7
+      },
+      "id": "3240e693-65b2-4c38-a60c-90358ed54ab2",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        48
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Certificate Generation\nGenerates unique Certificate ID + QR code, inserts attendee/event details into the HTML template, and converts it into PNG using HTMLCSStoImage.\n",
+        "height": 256,
+        "width": 640,
+        "color": 7
+      },
+      "id": "8c14f634-a09d-48c6-b76a-44eb191bcecf",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        384,
+        -80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.image_url }}",
+        "options": {}
+      },
+      "id": "a2918734-d77b-44b6-ba6c-ae839fdd9743",
+      "name": "Download Binary File",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1088,
+        224
+      ],
+      "typeVersion": 4.3
+    },
+    {
+      "parameters": {
+        "content": "## Storage\nCertificate PNG is downloaded and uploaded to Google Drive.  \nMetadata (event, certificate ID, attendee) is saved for easy lookup.\n",
+        "height": 256,
+        "width": 448,
+        "color": 7
+      },
+      "id": "70d1dac3-f51f-4d40-920c-1d442ab97c43",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        -80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Email Delivery\nSends participant an HTML email including event info, QR code, and the certificate image/download link.\n",
+        "height": 272,
+        "width": 288,
+        "color": 7
+      },
+      "id": "7fe0ed4a-b932-49a0-9d3e-2d42f63646da",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1504,
+        -80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Logging & Alerts\nRegistration + certificate details are logged in Google Sheets.  \nSlack message notifies organizers of new registration.\n",
+        "height": 320,
+        "width": 352,
+        "color": 7
+      },
+      "id": "bb3e2658-9657-495f-b18b-d41d953c5483",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1824,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Response\nReturns JSON with success message, certificateId, and verification URL.\n",
+        "height": 224,
+        "width": 304,
+        "color": 7
+      },
+      "id": "0f47a222-a911-4a4c-b238-1b174d0a9473",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2208,
+        -96
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1ahhSqET84YODlUtWKmX-knpmL5oQDCzxoFi-hLK-4jQ/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1617952745,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ahhSqET84YODlUtWKmX-knpmL5oQDCzxoFi-hLK-4jQ/edit#gid=1617952745"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        416
+      ],
+      "id": "af45fa8c-b0fe-4bce-8cbb-2dcd54983a96",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "DPt2oWJeFLHqFUl1",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"Missing required fields\",\n  \"message\": \"Please provide name, email, and event information.\"\n}",
+        "options": {}
+      },
+      "id": "01050a3e-8872-41c1-b9ca-03af488b1a2f",
+      "name": "Validation Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        16,
+        576
+      ],
+      "typeVersion": 1.1
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Verifi Email": {
+      "main": [
+        [
+          {
+            "node": "Check Email Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Email Valid": {
+      "main": [
+        [
+          {
+            "node": "Generate Certificate ID & QR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Verification Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML/CSS to Image": {
+      "main": [
+        [
+          {
+            "node": "Download Binary File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Binary File": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Slack Channel": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Certificate Email": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Send Certificate Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Certificate HTML": {
+      "main": [
+        [
+          {
+            "node": "HTML/CSS to Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Required Fields": {
+      "main": [
+        [
+          {
+            "node": "Verifi Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Certificate ID & QR": {
+      "main": [
+        [
+          {
+            "node": "Prepare Certificate HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Required Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8fd4684d-4e7d-465c-b391-7756b6ebcf3e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d0ce5cc3a9ca7b9c04d9f614c5c53bb762f4a575c2b4466c053d332ca170b9e"
+  },
+  "nodeGroups": [],
+  "id": "izU9h9lfKlaGtSdl",
+  "tags": []
+}

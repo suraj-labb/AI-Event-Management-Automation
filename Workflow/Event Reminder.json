@@ -1,0 +1,120 @@
+{
+  "name": "Event Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1LZkeVufRWGE5BTRb00pJmT1GhhVpAZTvRxgsW4iT_oo/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Ai workshop",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1LZkeVufRWGE5BTRb00pJmT1GhhVpAZTvRxgsW4iT_oo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b8da078a-1a47-4916-a656-2f97aa5d7e9c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SEMLQgseMd3f74lt",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"Email Address\"] }}",
+        "subject": "Reminder: Workshop is in 2 Days",
+        "emailType": "text",
+        "message": "=Hi {{ $json[\"Full Name\"] }},  This is a reminder that your workshop will be held on 30 July 2026. Please report on time.                          Regards,                                  Event Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "541e8c4b-2b23-4e5d-9896-61501f608fec",
+      "name": "Send a message",
+      "webhookId": "8795ef1f-0c42-411e-9147-c1594b0a21fd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bhkxgRlJkBU0IJ64",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 27,
+              "triggerAtHour": 11,
+              "triggerAtMinute": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c8dac515-3831-427f-b5f7-7ddb36c259a9",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f81e9bb5-e7cd-4805-bbef-67328e5b72b5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d0ce5cc3a9ca7b9c04d9f614c5c53bb762f4a575c2b4466c053d332ca170b9e"
+  },
+  "nodeGroups": [],
+  "id": "Nb4dZTdLJkwTg477",
+  "tags": []
+}
